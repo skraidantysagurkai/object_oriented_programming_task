@@ -11,4 +11,6 @@ add_executable(OP main.cpp
         TextReader.h
         UserInterface.cpp
         UserInterface.h
+        FileGenerator.cpp
+        FileGenerator.h
 )

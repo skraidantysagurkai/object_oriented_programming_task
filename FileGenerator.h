@@ -9,13 +9,19 @@
 
 class FileGenerator {
 public:
-    FileGenerator();
+    FileGenerator(int len);
 
 
 private:
-    void generateFile(int n, int student_num);
-    void writeCsvChunk(const std::vector<Student> &students, std::ofstream &file);
-    void writeLargeCsvParallel(const string &filename, size_t totalRows, size_t chunkSize, size_t numThreads);
+    std::vector<Student> generated_data;
+
+    void generateData(int student_num);
+    void exportStudentDataToCSV(const std::vector<Student>& studentData,
+                                const std::string& fileName, int chunkSize);
+
+    static void writeChunkToCSV(const std::vector<Student> &students, std::ofstream &outputFile);
+
+    static void writeStudentToCSV(const Student &student, std::ofstream &outputFile);
 };
 
 

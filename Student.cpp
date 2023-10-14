@@ -15,6 +15,10 @@ const std::string &Student::getLastName() const {
     return last_name;
 }
 
+const std::vector<int> &Student::getGradeData() const {
+    return grade_data;
+}
+
 void Student::add_grade(int num) {
     grade_data.push_back(num);
 }

@@ -28,7 +28,7 @@ struct Student {
     double calculateMedianGrade();
 
     // Function to randomly generate a random series of grades
-    void generateRandomGrades();
+    void generateRandomGrades(int num_of_grades = 0);
 };
 
 // Comparator structure for Student structure

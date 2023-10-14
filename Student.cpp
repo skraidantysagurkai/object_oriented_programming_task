@@ -50,13 +50,16 @@ double Student::calculateMedianGrade() {
     }
 }
 
-void Student::generateRandomGrades() {
+void Student::generateRandomGrades(int num_of_grades) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(1, 10);
 
-    int count = distribution(gen);
-    for (int i = 0; i < count; ++i) {
+    if (num_of_grades == 0){
+        num_of_grades = distribution(gen);
+    }
+
+    for (int i = 0; i < num_of_grades; ++i) {
         int randomNum = distribution(gen);
         add_grade(randomNum);
     }

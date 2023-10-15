@@ -12,6 +12,8 @@
 #include <thread>
 #include <mutex>
 
+
+std::mutex file_Mutex;  // Mutex to synchronize file writing
 // File stream parser.
 // Note: Haven't tried to open other format files than .txt, however structure should work with most text documents
 // with minimal adjustment.
@@ -28,7 +30,7 @@ TextReader::TextReader() {
     }
 }
 
-TextReader::TextReader(std::string& fileName, int chunkSize) {
+TextReader::TextReader(std::string fileName, int chunkSize) {
     readStudentDataFromCSV(fileName, chunkSize);
 }
 
@@ -68,11 +70,9 @@ void TextReader::readTextFile(const std::string &file_name) {
     file.close();
 }
 
-std::mutex fileMutex;  // Mutex to synchronize file reading
-
 void TextReader::readChunkFromCSV(const std::string& fileName, std::vector<Student>& students, std::ifstream& inputFile) {
     // Acquire lock to ensure exclusive access to the file
-    std::lock_guard<std::mutex> lock(fileMutex);
+    std::lock_guard<std::mutex> lock(file_Mutex);
 
     // Read student data
     std::string line;
@@ -136,4 +136,8 @@ void TextReader::readStudentDataFromCSV(const std::string& fileName, int chunkSi
     }
 
     inputFile.close();
+}
+
+const std::vector<Student> &TextReader::getScrapedStudentData() const {
+    return scraped_student_data;
 }

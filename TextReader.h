@@ -10,12 +10,13 @@
 
 class TextReader {
 public:
-    TextReader(string &fileName, int chunkSize);
+    TextReader(std::string fileName, int chunkSize);
+    TextReader();
 
     std::vector<Student> scraped_student_data;
     std::string file_path;
 
-    TextReader();
+    const std::vector<Student> &getScrapedStudentData() const;
 
 private:
     void readTextFile(const std::string &file_name);

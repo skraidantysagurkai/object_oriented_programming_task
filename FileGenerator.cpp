@@ -4,8 +4,9 @@
 
 #include "FileGenerator.h"
 
+std::mutex fileMutex;  // Mutex to synchronize file writing
 
-FileGenerator::FileGenerator(int len, int chunkSize ,string fileName) {
+FileGenerator::FileGenerator(int len, int chunkSize, string fileName) {
     generateData(len);
     exportStudentDataToCSV(generated_data, fileName, chunkSize);
 }
@@ -28,8 +29,6 @@ void FileGenerator::generateData(int student_num) {
         generated_data.push_back(student);
     }
 }
-
-std::mutex fileMutex;  // Mutex to synchronize file writing
 
 void FileGenerator::writeStudentToCSV(const Student& student, std::ofstream& outputFile) {
     outputFile << student.getFirstName() << "," << student.getLastName();

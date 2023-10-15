@@ -3,23 +3,14 @@
 //
 
 #include "FileGenerator.h"
-#include <iostream>
-#include <string>
-
-#include <fstream>
-#include <vector>
-#include <thread>
-#include <mutex>
 
 
-FileGenerator::FileGenerator(int len) {
+FileGenerator::FileGenerator(int len, int chunkSize ,string fileName) {
     generateData(len);
-
-    const std::string fileName = "output.csv";
-    const int chunkSize = 1000;  // Adjust the chunk size based on your needs
-
     exportStudentDataToCSV(generated_data, fileName, chunkSize);
-
+}
+FileGenerator::FileGenerator(int chunkSize, string fileName, std::vector<Student> data) {
+    exportStudentDataToCSV(data, fileName, chunkSize);
 }
 
 void FileGenerator::generateData(int student_num) {
@@ -27,8 +18,10 @@ void FileGenerator::generateData(int student_num) {
         std::ostringstream oss;
         oss << "FirstName_" << i+1;
         std::string name = oss.str();
-        oss << "LastName_" << i+1;
-        std::string last_name = oss.str();
+
+        std::ostringstream pss;
+        pss << "LastName_" << i+1;
+        std::string last_name = pss.str();
 
         Student student = Student(name, last_name);
         student.generateRandomGrades(15);
@@ -54,7 +47,7 @@ void FileGenerator::writeChunkToCSV(const std::vector<Student>& students, std::o
     static bool isFirstChunk = true;
     if (isFirstChunk) {
         outputFile << "First Name,Last Name";
-        Student student = students[0];
+        const Student& student = students[0];
         const std::vector<int>& grades = student.getGradeData();
         for (std::size_t i = 0; i < grades.size(); ++i) {
             outputFile << ",Grade_" << i + 1;
@@ -70,7 +63,10 @@ void FileGenerator::writeChunkToCSV(const std::vector<Student>& students, std::o
 }
 
 void FileGenerator::exportStudentDataToCSV(const std::vector<Student>& studentData, const std::string& fileName, int chunkSize) {
+    std::remove(fileName.c_str());  // Remove the file if it exists to start fresh
+
     std::ofstream outputFile(fileName);
+
     if (!outputFile.is_open()) {
         std::cerr << "Error: Unable to open file for writing." << std::endl;
         return;
@@ -78,7 +74,7 @@ void FileGenerator::exportStudentDataToCSV(const std::vector<Student>& studentDa
 
     // Calculate the number of chunks
     const std::size_t dataSize = studentData.size();
-    const std::size_t numChunks = (dataSize + chunkSize - 1) / chunkSize;
+    const std::size_t numChunks = (dataSize - 1) / chunkSize;
 
     // Create threads for each chunk
     std::vector<std::thread> threads;

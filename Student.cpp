@@ -3,6 +3,9 @@
 //
 #include "libraries.h"
 #include "Student.h"
+#include <mutex>
+
+std::mutex gradeMutex;
 
 Student::Student(std::string firstName, std::string lastName)
         : first_name(std::move(firstName)), last_name(std::move(lastName)) {}
@@ -20,7 +23,12 @@ const std::vector<int> &Student::getGradeData() const {
 }
 
 void Student::add_grade(int num) {
+    std::lock_guard<std::mutex> lock(gradeMutex);
     grade_data.push_back(num);
+}
+
+void Student::setGradeData(const std::vector<int>& grades) {
+    grade_data = grades;
 }
 
 double Student::calculateAverageGrade() const {

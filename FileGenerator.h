@@ -4,19 +4,27 @@
 
 #ifndef OP_FILEGENERATOR_H
 #define OP_FILEGENERATOR_H
-#include <format>
 #include "libraries.h"
+#include <iostream>
+#include <string>
+
+#include <fstream>
+#include <vector>
+#include <thread>
+#include <mutex>
 
 class FileGenerator {
 public:
-    FileGenerator(int len);
+    FileGenerator(int len, int chunkSize, string fileName);
 
 
 private:
+    FileGenerator(int chunkSize, string fileName, std::vector<Student> data);
+
     std::vector<Student> generated_data;
 
     void generateData(int student_num);
-    void exportStudentDataToCSV(const std::vector<Student>& studentData,
+    static void exportStudentDataToCSV(const std::vector<Student>& studentData,
                                 const std::string& fileName, int chunkSize);
 
     static void writeChunkToCSV(const std::vector<Student> &students, std::ofstream &outputFile);

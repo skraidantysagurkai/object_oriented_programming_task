@@ -10,6 +10,8 @@
 
 class TextReader {
 public:
+    TextReader(string &fileName, int chunkSize);
+
     std::vector<Student> scraped_student_data;
     std::string file_path;
 
@@ -17,6 +19,10 @@ public:
 
 private:
     void readTextFile(const std::string &file_name);
+
+    static void readChunkFromCSV(const std::string& fileName, std::vector<Student>& students, std::ifstream& inputFile);
+
+    void readStudentDataFromCSV(const std::string &fileName, int chunkSize);
 };
 
 #endif //OP_TEXTREADER_H

@@ -125,7 +125,7 @@ void readCSV(const std::string& filename, std::vector<Student>& data, int startL
 
 void TextReader::readStudentDataFromCSV(const std::string& fileName) {
 
-    const int totalThreads = 2;  // Adjust based on the desired number of threads
+    const int totalThreads = 4;  // Adjust based on the desired number of threads
 
     // Calculate the number of lines each thread should read
     int linesPerThread = 0;

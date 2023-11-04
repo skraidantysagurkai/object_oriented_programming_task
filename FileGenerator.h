@@ -15,8 +15,8 @@
 
 class FileGenerator {
 public:
-    FileGenerator(int chunkSize, string fileName, std::vector<Student> data);
-    FileGenerator(int len, int chunkSize, string fileName);
+    FileGenerator(std::vector<Student> data, string fileName);
+    FileGenerator(int len, string fileName);
 
 private:
     std::vector<Student> generated_data;
@@ -24,7 +24,7 @@ private:
     void generateData(int student_num);
 
     static void exportStudentDataToCSV(const std::vector<Student>& studentData,
-                                const std::string& fileName, int chunkSize);
+                                const std::string& fileName);
 
     static void writeChunkToCSV(const std::vector<Student> &students, std::ofstream &outputFile);
 

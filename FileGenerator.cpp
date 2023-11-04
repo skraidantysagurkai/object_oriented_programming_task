@@ -6,12 +6,12 @@
 
 std::mutex fileMutex;  // Mutex to synchronize file writing
 
-FileGenerator::FileGenerator(int len, int chunkSize, string fileName) {
+FileGenerator::FileGenerator(int len, string fileName) {
     generateData(len);
-    exportStudentDataToCSV(generated_data, fileName, chunkSize);
+    exportStudentDataToCSV(generated_data, fileName);
 }
-FileGenerator::FileGenerator(int chunkSize, string fileName, std::vector<Student> data) {
-    exportStudentDataToCSV(data, fileName, chunkSize);
+FileGenerator::FileGenerator(std::vector<Student> data, string fileName) {
+    exportStudentDataToCSV(data, fileName);
 }
 
 void FileGenerator::generateData(int student_num) {
@@ -42,26 +42,13 @@ void FileGenerator::writeChunkToCSV(const std::vector<Student>& students, std::o
     // Acquire lock to ensure exclusive access to the file
     std::lock_guard<std::mutex> lock(fileMutex);
 
-    // Write the header if this is the first chunk
-    static bool isFirstChunk = true;
-    if (isFirstChunk) {
-        outputFile << "First Name,Last Name";
-        const Student& student = students[0];
-        std::vector<int> grades = student.getGradeData();
-        for (std::size_t i = 0; i < grades.size(); ++i) {
-            outputFile << ",Grade_" << i + 1;
-        }
-        outputFile << "\n";
-        isFirstChunk = false;
-    }
-
     // Write student data to the file
     for (const auto& student : students) {
         writeStudentToCSV(student, outputFile);
     }
 }
 
-void FileGenerator::exportStudentDataToCSV(const std::vector<Student>& studentData, const std::string& fileName, int chunkSize) {
+void FileGenerator::exportStudentDataToCSV(const std::vector<Student>& studentData, const std::string& fileName) {
     std::remove(fileName.c_str());  // Remove the file if it exists to start fresh
 
     std::ofstream outputFile(fileName);
@@ -73,13 +60,19 @@ void FileGenerator::exportStudentDataToCSV(const std::vector<Student>& studentDa
 
     // Calculate the number of chunks
     const std::size_t dataSize = studentData.size();
-    const std::size_t numChunks = (dataSize - 1) / chunkSize;
+
+    const int totalThreads = 4;  // Adjust based on the desired number of threads
+
+    // Calculate the number of lines each thread should read
+    int linesPerThread = dataSize/ totalThreads;
+
+
 
     // Create threads for each chunk
     std::vector<std::thread> threads;
-    for (std::size_t i = 0; i < numChunks; ++i) {
-        std::size_t startIdx = i * chunkSize;
-        std::size_t endIdx = std::min((i + 1) * chunkSize, dataSize);
+    for (std::size_t i = 0; i < totalThreads; ++i) {
+        std::size_t startIdx = i * linesPerThread;
+        std::size_t endIdx = std::min((i + 1) * linesPerThread, dataSize);
 
         threads.emplace_back(writeChunkToCSV, std::vector<Student>(studentData.begin() + startIdx, studentData.begin() + endIdx), std::ref(outputFile));
     }

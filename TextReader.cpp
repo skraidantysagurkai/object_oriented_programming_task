@@ -1,7 +1,7 @@
 //
 // Created by Rokas Sabaitis on 2023-10-01.
 //
-
+#include "libraries.h"
 #include "TextReader.h"
 
 #include <iostream>
@@ -11,9 +11,9 @@
 #include <string>
 #include <thread>
 #include <mutex>
+#include <algorithm>    // std::min
 
 
-std::mutex file_Mutex;  // Mutex to synchronize file writing
 // File stream parser.
 // Note: Haven't tried to open other format files than .txt, however structure should work with most text documents
 // with minimal adjustment.
@@ -30,8 +30,14 @@ TextReader::TextReader() {
     }
 }
 
-TextReader::TextReader(std::string fileName, int chunkSize) {
-    readStudentDataFromCSV(fileName, chunkSize);
+TextReader::TextReader(const std::string& fileName) {
+    try {
+        // Call the function to read the text file
+        readStudentDataFromCSV(fileName);
+    } catch (const std::exception &e) {
+        // Catch and print any exceptions that occurred
+        std::cerr << e.what() << std::endl;
+    }
 }
 
 void TextReader::readTextFile(const std::string &file_name) {
@@ -70,74 +76,84 @@ void TextReader::readTextFile(const std::string &file_name) {
     file.close();
 }
 
-void TextReader::readChunkFromCSV(const std::string& fileName, std::vector<Student>& students, std::ifstream& inputFile) {
-    // Acquire lock to ensure exclusive access to the file
-    std::lock_guard<std::mutex> lock(file_Mutex);
+std::mutex dataMutex;
 
-    // Read student data
+void readCSV(const std::string& filename, std::vector<Student>& data, int startLine, int endLine) {
+    std::ifstream file(filename);
     std::string line;
-    while (std::getline(inputFile, line)) {
-        std::istringstream lineStream(line);
-        std::string firstName, lastName;
-        std::vector<int> grades;
 
-        // Assuming the first two columns are First Name and Last Name
-        std::getline(lineStream, firstName, ',');
-        std::getline(lineStream, lastName, ',');
+    int lineCount = 0;
 
-        // Read the grades
-        int grade;
-        while (lineStream >> grade) {
-            grades.push_back(grade);
+    while (std::getline(file, line)) {
 
-            // Check for the comma, and ignore it
-            if (lineStream.peek() == ',') {
-                lineStream.ignore();
+        // Check if the current line is within the specified range for this thread
+        if (lineCount >= startLine && lineCount < endLine) {
+            std::stringstream ss(line);
+            std::string firstName, lastName;
+            std::vector<int> grades;
+
+            // Extract first and last names
+            std::getline(ss, firstName, ',');
+            std::getline(ss, lastName, ',');
+
+            // Extract grades
+            int grade;
+            while (ss >> grade) {
+                grades.push_back(grade);
+
+                // Check for comma and ignore it
+                if (ss.peek() == ',') {
+                    ss.ignore();
+                }
             }
+
+            Student student = Student(firstName, lastName);
+            student.setGradeData(grades);
+            // Use a lock to protect the shared data (students vector)
+            std::lock_guard<std::mutex> lock(dataMutex);
+            data.emplace_back(student);
         }
 
-        // Create a student and set the data
-        Student student(firstName, lastName);
-        student.setGradeData(grades);
+        ++lineCount;
 
-        // Add the student to the vector
-        students.push_back(student);
+        // Break out of the loop if we have reached the endLine
+        if (lineCount == endLine) {
+            break;
+        }
     }
 }
 
-void TextReader::readStudentDataFromCSV(const std::string& fileName, int chunkSize) {
-    std::ifstream inputFile(fileName);
+void TextReader::readStudentDataFromCSV(const std::string& fileName) {
 
-    if (!inputFile.is_open()) {
-        std::cerr << "Error: Unable to open file for reading." << std::endl;
-        return;
+    const int totalThreads = 2;  // Adjust based on the desired number of threads
+
+    // Calculate the number of lines each thread should read
+    int linesPerThread = 0;
+    {
+        std::ifstream file(fileName);
+        std::string line;
+        while (std::getline(file, line)) {
+            ++linesPerThread;
+        }
     }
+    linesPerThread /= totalThreads;
 
-    // Assuming the first line contains headers, read and discard it
-    std::string header;
-    std::getline(inputFile, header);
-
-    // Calculate the number of chunks
-    const std::size_t fileSize = std::count(std::istreambuf_iterator<char>(inputFile), std::istreambuf_iterator<char>(), '\n');
-    const std::size_t numChunks = (fileSize - 1) / chunkSize;
-
-    // Create threads for each chunk
+    // Create threads
     std::vector<std::thread> threads;
+    for (int i = 0; i < totalThreads; ++i) {
+        int startLine = i * linesPerThread;
+        int endLine = (i == totalThreads - 1) ? INT_MAX : (i + 1) * linesPerThread;
 
 
-    threads.reserve(numChunks);
-    for (int i = 0; i < numChunks; ++i) {
-        threads.emplace_back(readChunkFromCSV, fileName, std::ref(scraped_student_data), std::ref(inputFile));
+        threads.emplace_back(readCSV, std::ref(fileName), std::ref(scraped_student_data), startLine, endLine);
     }
 
-    // Join threads
+    // Wait for threads to finish
     for (auto& thread : threads) {
         thread.join();
     }
-
-    inputFile.close();
 }
 
-const std::vector<Student> &TextReader::getScrapedStudentData() const {
+std::vector<Student> &TextReader::getScrapedStudentData() {
     return scraped_student_data;
 }

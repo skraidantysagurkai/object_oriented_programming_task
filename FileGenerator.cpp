@@ -47,7 +47,7 @@ void FileGenerator::writeChunkToCSV(const std::vector<Student>& students, std::o
     if (isFirstChunk) {
         outputFile << "First Name,Last Name";
         const Student& student = students[0];
-        const std::vector<int>& grades = student.getGradeData();
+        std::vector<int> grades = student.getGradeData();
         for (std::size_t i = 0; i < grades.size(); ++i) {
             outputFile << ",Grade_" << i + 1;
         }

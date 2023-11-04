@@ -3,6 +3,9 @@
 //
 #include "libraries.h"
 #include "Student.h"
+#include <mutex>
+
+std::mutex gradeMutex;
 
 Student::Student(std::string firstName, std::string lastName)
         : first_name(std::move(firstName)), last_name(std::move(lastName)) {}
@@ -15,8 +18,17 @@ const std::string &Student::getLastName() const {
     return last_name;
 }
 
+const std::vector<int> &Student::getGradeData() const {
+    return grade_data;
+}
+
 void Student::add_grade(int num) {
+    std::lock_guard<std::mutex> lock(gradeMutex);
     grade_data.push_back(num);
+}
+
+void Student::setGradeData(const std::vector<int>& grades) {
+    grade_data = grades;
 }
 
 double Student::calculateAverageGrade() const {
@@ -50,13 +62,16 @@ double Student::calculateMedianGrade() {
     }
 }
 
-void Student::generateRandomGrades() {
+void Student::generateRandomGrades(int num_of_grades) {
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(1, 10);
 
-    int count = distribution(gen);
-    for (int i = 0; i < count; ++i) {
+    if (num_of_grades == 0){
+        num_of_grades = distribution(gen);
+    }
+
+    for (int i = 0; i < num_of_grades; ++i) {
         int randomNum = distribution(gen);
         add_grade(randomNum);
     }

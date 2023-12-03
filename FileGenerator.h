@@ -16,6 +16,7 @@
 class FileGenerator {
 public:
     FileGenerator(std::vector<Student> data, string fileName);
+    FileGenerator(std::list<Student> data, string fileName);
     FileGenerator(int len, string fileName);
 
 private:
@@ -26,7 +27,12 @@ private:
     static void exportStudentDataToCSV(const std::vector<Student>& studentData,
                                 const std::string& fileName);
 
+    static void exportStudentDataToCSV(const std::list<Student>& studentData,
+                                       const std::string& fileName);
+
     static void writeChunkToCSV(const std::vector<Student> &students, std::ofstream &outputFile);
+
+    static void writeChunkToCSVList(const std::list<Student>& students, std::ofstream& outputFile);
 
     static void writeStudentToCSV(const Student &student, std::ofstream &outputFile);
 };

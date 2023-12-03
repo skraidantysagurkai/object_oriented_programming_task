@@ -2,18 +2,6 @@
 ## Context
 v.02 times:
 
-../data/gen-1000.csv \
-Read Time: 45 milliseconds \
-Sort Time: 1 milliseconds \
-Write Time: 17 milliseconds
-
-
-../data/gen-10000.csv \
-Read Time: 162 milliseconds \
-Sort Time: 7 milliseconds \
-Write Time: 74 milliseconds
-
-
 ../data/gen-100000.csv \
 Read Time: 1511 milliseconds \
 Sort Time: 80 milliseconds \
@@ -70,3 +58,16 @@ Sort Time: 13972 milliseconds
 CSV file written successfully.
 CSV file written successfully.
 Write Time: 58267 milliseconds
+
+
+## Speed Tests
+Vector speed tests:
+
+| File Size<br/>   | 1000  | 10000  | 100000  | 1000000  | 10000000  |
+|------------------|:-----:|:------:|:-------:|:--------:|:---------:|
+| Read Times       | 4 ms  | 162 ms | 1511 ms | 11007 ms | 152517 ms |
+| Sort Times       | 1 ms  |  7 ms  |  80 ms  |  731 ms  | 12374 ms  |
+| Write Times      | 17 ms | 74 ms  | 599 ms  | 4803 ms  | 85196 ms  |
+| **Total Times**  | 22 ms |        |         |          |           |
+
+

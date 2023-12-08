@@ -8,11 +8,6 @@
 int main() {
     //UserInterface();
 
-    //  FileGenerator(1000, "../data/gen-1000.csv");
-    //  FileGenerator(10000, 5000,"../data/gen-10000.csv");
-    //  FileGenerator(100000, 5000,"../data/gen-100000.csv");
-    //  FileGenerator(1000000, 20000,"../data/gen-1000000.csv");
-    //  FileGenerator(10000000, 20000,"../data/gen-10000000.csv");
     std::vector<std::string> filePaths = {
             "../data/gen-1000.csv",
             "../data/gen-10000.csv",
@@ -20,6 +15,26 @@ int main() {
             "../data/gen-1000000.csv",
             "../data/gen-10000000.csv"
     };
+
+    bool allFilesExist = true;
+
+    for (const std::string& filePath : filePaths) {
+        std::ifstream file(filePath);
+
+        if (!file.good()) {
+            allFilesExist = false;
+        }
+    }
+
+    // Generating files
+    if (!allFilesExist) {
+          FileGenerator(1000, "../data/gen-1000.csv");
+          FileGenerator(10000, "../data/gen-10000.csv");
+          FileGenerator(100000,"../data/gen-100000.csv");
+          FileGenerator(1000000, "../data/gen-1000000.csv");
+          FileGenerator(10000000, "../data/gen-10000000.csv");
+    }
+
     for (const std::string& filePath : filePaths) {
         std::cout << filePath << std::endl;
 

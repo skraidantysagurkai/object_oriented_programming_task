@@ -130,7 +130,7 @@ int main() {
             V03();
             break;
         } else {
-            std::cout << "Invalid Input." << std::endl;
+            std::cout << "Invalid Input.\n" << std::endl;
         }
     }
     return 0;

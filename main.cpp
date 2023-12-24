@@ -132,10 +132,10 @@ void approach1(T& source, T& destination1, T& destination2, Predicate predicate)
 }
 
 template <typename T, typename Predicate>
-void approach3(T& source, T& destination, Predicate predicate) {
-    auto it = std::remove_if(source.begin(), source.end(), predicate);
-    destination.insert(destination.end(), std::make_move_iterator(it), std::make_move_iterator(source.end()));
-    source.erase(it, source.end());
+void approach3(T& source, T& destination1, T& destination2, Predicate predicate) {
+    auto partition_point = std::partition(source.begin(), source.end(), predicate);
+    destination1.insert(destination1.end(), std::make_move_iterator(source.begin()), std::make_move_iterator(partition_point));
+    destination2.insert(destination2.end(), std::make_move_iterator(partition_point), std::make_move_iterator(source.end()));
 }
 
 
@@ -271,13 +271,14 @@ void V10(){
 
         std::list<Student> fileData = rd.getScrapedStudentDataList();
         std::list<Student> under5students;
+        std::list<Student> over5students;
 
         auto start = std::chrono::high_resolution_clock::now();
 
         // Define your criteria using a lambda function
         auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
         // Move elements from sourceList to destinationList based on the criteria
-        std::copy_if(fileData.begin(), fileData.end(), std::back_inserter(under5students), criteria);
+        approach3(fileData, under5students, over5students, criteria);
 
         auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
                 (std::chrono::high_resolution_clock::now() - start);
@@ -293,13 +294,14 @@ void V10(){
 
         std::vector<Student> fileData = rd.getScrapedStudentData();
         std::vector<Student> under5students;
+        std::vector<Student> over5students;
 
         auto start = std::chrono::high_resolution_clock::now();
 
         // Define your criteria using a lambda function
         auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
         // Move elements from sourceList to destinationList based on the criteria
-        std::copy_if(fileData.begin(), fileData.end(), std::back_inserter(under5students), criteria);
+        approach3(fileData, under5students, over5students, criteria);
 
         auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
                 (std::chrono::high_resolution_clock::now() - start);

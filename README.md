@@ -58,5 +58,5 @@ In approach 2 we sort our students into two list type objects, by finding all st
 * Storage: APPLE SSD AP0128J 121 GB
 
 ### Results:
-* It is evident that he second approach is more efficient, from which vector type lists have shown the best results. Approach 2 has been chosen to make an optimised approach 3. 
+* It is evident that he second approach is more efficient, from which vector type lists have shown the best results. I have no idea how to further optimise approach 2, so approach 3 will be an optimised approach 2
 * Results consist of averaged times over 5 different runs.

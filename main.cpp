@@ -112,12 +112,78 @@ void V03(){
     }
 }
 
+
+template <typename T, typename Predicate>
+void moveElementsWithCriteria(T& source, T& destination, Predicate predicate) {
+    auto it = std::remove_if(source.begin(), source.end(), predicate);
+    destination.insert(destination.end(), std::make_move_iterator(it), std::make_move_iterator(source.end()));
+    source.erase(it, source.end());
+}
+
+
+void V10(){
+    std::vector<std::string> filePaths = {
+            "../data/gen-1000.csv",
+            "../data/gen-10000.csv",
+            "../data/gen-100000.csv",
+            "../data/gen-1000000.csv",
+            // "../data/gen-10000000.csv"
+    };
+
+    std::cout << "LISTS" << std::endl;
+    for (const std::string& filePath : filePaths) {
+        std::cout << filePath << std::endl;
+
+        TextReader rd = TextReader(filePath, false);
+
+        std::list<Student> fileData = rd.getScrapedStudentDataList();
+        std::list<Student> under5students;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        // Define your criteria using a lambda function
+        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
+        // Move elements from sourceList to destinationList based on the criteria
+        moveElementsWithCriteria(fileData, under5students, criteria);
+
+        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                (std::chrono::high_resolution_clock::now() - start);
+        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+
+    }
+
+    std::cout << "VECTOR" << std::endl;
+    for (const std::string& filePath : filePaths) {
+        std::cout << filePath << std::endl;
+
+        TextReader rd = TextReader(filePath);
+
+        std::vector<Student> fileData = rd.getScrapedStudentData();
+        std::vector<Student> under5students;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        // Define your criteria using a lambda function
+        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
+        // Move elements from sourceList to destinationList based on the criteria
+        moveElementsWithCriteria(fileData, under5students, criteria);
+
+        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                (std::chrono::high_resolution_clock::now() - start);
+
+        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+    }
+}
+
+
+
+
 int main() {
     std::string input;
 
     while (true) {
         std::cout << "Please choose which release to launch?\n"
-                     "v.01 : 1, v.02 : 2, v.03 : 3\n";
+                     "v.01 : 1, v.02 : 2, v.03 : 3, v1.0 : 4\n";
         std::getline(std::cin, input);
 
         if (input == "1") {
@@ -128,6 +194,9 @@ int main() {
             break;
         } else if (input == "3") {
             V03();
+            break;
+        } else if (input == "4") {
+            V10();
             break;
         } else {
             std::cout << "Invalid Input.\n" << std::endl;

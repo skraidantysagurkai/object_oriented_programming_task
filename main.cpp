@@ -114,14 +114,14 @@ void V03(){
 
 
 template <typename T, typename Predicate>
-void moveElementsWithCriteria(T& source, T& destination, Predicate predicate) {
+void approach2(T& source, T& destination, Predicate predicate) {
     auto it = std::remove_if(source.begin(), source.end(), predicate);
     destination.insert(destination.end(), std::make_move_iterator(it), std::make_move_iterator(source.end()));
     source.erase(it, source.end());
 }
 
 template <typename T, typename Predicate>
-void splitElementsWithCriteria(T& source, T& destination1, T& destination2, Predicate predicate) {
+void approach1(T& source, T& destination1, T& destination2, Predicate predicate) {
     for (const auto& element : source) {
         if (predicate(element)) {
             destination1.push_back(element);
@@ -129,6 +129,13 @@ void splitElementsWithCriteria(T& source, T& destination1, T& destination2, Pred
             destination2.push_back(element);
         }
     }
+}
+
+template <typename T, typename Predicate>
+void approach3(T& source, T& destination, Predicate predicate) {
+    auto it = std::remove_if(source.begin(), source.end(), predicate);
+    destination.insert(destination.end(), std::make_move_iterator(it), std::make_move_iterator(source.end()));
+    source.erase(it, source.end());
 }
 
 
@@ -161,7 +168,101 @@ void V10(){
     }
 
 
-    std::cout << "Strategy 1" << std::endl;
+//    std::cout << "Strategy 1" << std::endl;
+//    std::cout << "LISTS" << std::endl;
+//    for (const std::string& filePath : filePaths) {
+//        std::cout << filePath << std::endl;
+//
+//        TextReader rd = TextReader(filePath, false);
+//
+//        std::list<Student> fileData = rd.getScrapedStudentDataList();
+//        std::list<Student> under5students;
+//        std::list<Student> over5students;
+//
+//        auto start = std::chrono::high_resolution_clock::now();
+//
+//        // Define your criteria using a lambda function
+//        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
+//        // Move elements from sourceList to destinationList based on the criteria
+//        approach1(fileData, under5students, over5students, criteria);
+//
+//        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+//                (std::chrono::high_resolution_clock::now() - start);
+//        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+//
+//    }
+//
+//    std::cout << "VECTOR" << std::endl;
+//    for (const std::string& filePath : filePaths) {
+//        std::cout << filePath << std::endl;
+//
+//        TextReader rd = TextReader(filePath);
+//
+//        std::vector<Student> fileData = rd.getScrapedStudentData();
+//        std::vector<Student> under5students;
+//        std::vector<Student> over5students;
+//
+//        auto start = std::chrono::high_resolution_clock::now();
+//
+//        // Define your criteria using a lambda function
+//        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
+//        // Move elements from sourceList to destinationList based on the criteria
+//        approach1(fileData, under5students, over5students, criteria);
+//
+//        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+//                (std::chrono::high_resolution_clock::now() - start);
+//
+//        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+//    }
+//
+//
+//    std::cout << "Strategy 2" << std::endl;
+//    std::cout << "LISTS" << std::endl;
+//    for (const std::string& filePath : filePaths) {
+//        std::cout << filePath << std::endl;
+//
+//        TextReader rd = TextReader(filePath, false);
+//
+//        std::list<Student> fileData = rd.getScrapedStudentDataList();
+//        std::list<Student> under5students;
+//
+//        auto start = std::chrono::high_resolution_clock::now();
+//
+//        // Define your criteria using a lambda function
+//        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
+//        // Move elements from sourceList to destinationList based on the criteria
+//        approach2(fileData, under5students, criteria);
+//
+//        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+//                (std::chrono::high_resolution_clock::now() - start);
+//        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+//
+//    }
+//
+//    std::cout << "VECTOR" << std::endl;
+//    for (const std::string& filePath : filePaths) {
+//        std::cout << filePath << std::endl;
+//
+//        TextReader rd = TextReader(filePath);
+//
+//        std::vector<Student> fileData = rd.getScrapedStudentData();
+//        std::vector<Student> under5students;
+//
+//        auto start = std::chrono::high_resolution_clock::now();
+//
+//        // Define your criteria using a lambda function
+//        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
+//        // Move elements from sourceList to destinationList based on the criteria
+//        approach2(fileData, under5students, criteria);
+//
+//        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+//                (std::chrono::high_resolution_clock::now() - start);
+//
+//        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+//    }
+
+
+    std::cout << "Strategy 3" << std::endl;
     std::cout << "LISTS" << std::endl;
     for (const std::string& filePath : filePaths) {
         std::cout << filePath << std::endl;
@@ -170,14 +271,13 @@ void V10(){
 
         std::list<Student> fileData = rd.getScrapedStudentDataList();
         std::list<Student> under5students;
-        std::list<Student> over5students;
 
         auto start = std::chrono::high_resolution_clock::now();
 
         // Define your criteria using a lambda function
-        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
+        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
         // Move elements from sourceList to destinationList based on the criteria
-        splitElementsWithCriteria(fileData, under5students, over5students, criteria);
+        std::copy_if(fileData.begin(), fileData.end(), std::back_inserter(under5students), criteria);
 
         auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
                 (std::chrono::high_resolution_clock::now() - start);
@@ -193,60 +293,13 @@ void V10(){
 
         std::vector<Student> fileData = rd.getScrapedStudentData();
         std::vector<Student> under5students;
-        std::vector<Student> over5students;
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        // Define your criteria using a lambda function
-        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
-        // Move elements from sourceList to destinationList based on the criteria
-        splitElementsWithCriteria(fileData, under5students, over5students, criteria);
-
-        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
-                (std::chrono::high_resolution_clock::now() - start);
-
-        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
-    }
-
-
-    std::cout << "Strategy 2" << std::endl;
-    std::cout << "LISTS" << std::endl;
-    for (const std::string& filePath : filePaths) {
-        std::cout << filePath << std::endl;
-
-        TextReader rd = TextReader(filePath, false);
-
-        std::list<Student> fileData = rd.getScrapedStudentDataList();
-        std::list<Student> under5students;
 
         auto start = std::chrono::high_resolution_clock::now();
 
         // Define your criteria using a lambda function
         auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
         // Move elements from sourceList to destinationList based on the criteria
-        moveElementsWithCriteria(fileData, under5students, criteria);
-
-        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
-                (std::chrono::high_resolution_clock::now() - start);
-        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
-
-    }
-
-    std::cout << "VECTOR" << std::endl;
-    for (const std::string& filePath : filePaths) {
-        std::cout << filePath << std::endl;
-
-        TextReader rd = TextReader(filePath);
-
-        std::vector<Student> fileData = rd.getScrapedStudentData();
-        std::vector<Student> under5students;
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        // Define your criteria using a lambda function
-        auto criteria = [](Student &student) { return student.calculateAverageGrade() < 5; };
-        // Move elements from sourceList to destinationList based on the criteria
-        moveElementsWithCriteria(fileData, under5students, criteria);
+        std::copy_if(fileData.begin(), fileData.end(), std::back_inserter(under5students), criteria);
 
         auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
                 (std::chrono::high_resolution_clock::now() - start);

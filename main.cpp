@@ -120,6 +120,17 @@ void moveElementsWithCriteria(T& source, T& destination, Predicate predicate) {
     source.erase(it, source.end());
 }
 
+template <typename T, typename Predicate>
+void splitElementsWithCriteria(T& source, T& destination1, T& destination2, Predicate predicate) {
+    for (const auto& element : source) {
+        if (predicate(element)) {
+            destination1.push_back(element);
+        } else {
+            destination2.push_back(element);
+        }
+    }
+}
+
 
 void V10(){
     std::vector<std::string> filePaths = {
@@ -130,6 +141,55 @@ void V10(){
             // "../data/gen-10000000.csv"
     };
 
+    std::cout << "Strategy 1" << std::endl;
+    std::cout << "LISTS" << std::endl;
+    for (const std::string& filePath : filePaths) {
+        std::cout << filePath << std::endl;
+
+        TextReader rd = TextReader(filePath, false);
+
+        std::list<Student> fileData = rd.getScrapedStudentDataList();
+        std::list<Student> under5students;
+        std::list<Student> over5students;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        // Define your criteria using a lambda function
+        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
+        // Move elements from sourceList to destinationList based on the criteria
+        splitElementsWithCriteria(fileData, under5students, over5students, criteria);
+
+        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                (std::chrono::high_resolution_clock::now() - start);
+        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+
+    }
+
+    std::cout << "VECTOR" << std::endl;
+    for (const std::string& filePath : filePaths) {
+        std::cout << filePath << std::endl;
+
+        TextReader rd = TextReader(filePath);
+
+        std::vector<Student> fileData = rd.getScrapedStudentData();
+        std::vector<Student> under5students;
+        std::vector<Student> over5students;
+
+        auto start = std::chrono::high_resolution_clock::now();
+
+        // Define your criteria using a lambda function
+        auto criteria = [](Student student) { return student.calculateAverageGrade() < 5; };
+        // Move elements from sourceList to destinationList based on the criteria
+        splitElementsWithCriteria(fileData, under5students, over5students, criteria);
+
+        auto sort_to_groups_duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                (std::chrono::high_resolution_clock::now() - start);
+
+        std::cout << "Sort Time: " << sort_to_groups_duration.count() << " milliseconds" << std::endl;
+    }
+
+
+    std::cout << "Strategy 2" << std::endl;
     std::cout << "LISTS" << std::endl;
     for (const std::string& filePath : filePaths) {
         std::cout << filePath << std::endl;

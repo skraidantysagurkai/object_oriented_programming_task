@@ -52,3 +52,11 @@ In approach 2 we sort our students into two list type objects, by finding all st
 | Vector         | 0 ms | 0 ms  |  5 ms  |  60 ms  | 3160 ms  |
 | List           | 0 ms | 0 ms  |  9 ms  |  92 ms  | 4153 ms  |
 
+### System parameters:
+* Processor: 2.3GHz Dual-core Intel Core i5
+* Memory: 8 GB 2133 MHz LPDDR3
+* Storage: APPLE SSD AP0128J 121 GB
+
+### Results:
+* It is evident that he second approach is more efficient, from which vector type lists have shown the best results.
+* Results consist of averaged times over 5 different runs.

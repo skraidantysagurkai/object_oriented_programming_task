@@ -138,8 +138,28 @@ void V10(){
             "../data/gen-10000.csv",
             "../data/gen-100000.csv",
             "../data/gen-1000000.csv",
-            // "../data/gen-10000000.csv"
+            "../data/gen-10000000.csv"
     };
+
+    bool allFilesExist = true;
+
+    for (const std::string& filePath : filePaths) {
+        std::ifstream file(filePath);
+
+        if (!file.good()) {
+            allFilesExist = false;
+        }
+    }
+
+    // Generating files
+    if (!allFilesExist) {
+        FileGenerator(1000, "../data/gen-1000.csv");
+        FileGenerator(10000, "../data/gen-10000.csv");
+        FileGenerator(100000,"../data/gen-100000.csv");
+        FileGenerator(1000000, "../data/gen-1000000.csv");
+        FileGenerator(10000000, "../data/gen-10000000.csv");
+    }
+
 
     std::cout << "Strategy 1" << std::endl;
     std::cout << "LISTS" << std::endl;

@@ -58,5 +58,13 @@ In approach 2 we sort our students into two list type objects, by finding all st
 * Storage: APPLE SSD AP0128J 121 GB
 
 ### Results:
-* It is evident that he second approach is more efficient, from which vector type lists have shown the best results. I have no idea how to further optimise approach 2, so approach 3 will be an optimised approach 2
+* It is evident that he second approach is more efficient, from which vector type lists have shown the best results. I have no idea how to further optimise approach 2, so approach 3 will be an optimised approach 1.
 * Results consist of averaged times over 5 different runs.
+
+**Approach 3:**
+In approach 3 we create two list type object, inserting students into subsequent list if there average is over 5 or under 5. To do this I've used optimised list type object methods.
+
+| File Size<br/> | 1000 | 10000 | 100000 | 1000000 | 10000000 |
+|----------------|:----:|:-----:|:------:|:-------:|:--------:|
+| Vector         | 0 ms | 0 ms  |  5 ms  |  60 ms  | 3160 ms  |
+| List           | 0 ms | 0 ms  |  9 ms  |  92 ms  | 4153 ms  |

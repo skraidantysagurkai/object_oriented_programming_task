@@ -66,5 +66,8 @@ In approach 3 we create two list type object, inserting students into subsequent
 
 | File Size<br/> | 1000 | 10000 | 100000 | 1000000 | 10000000 |
 |----------------|:----:|:-----:|:------:|:-------:|:--------:|
-| Vector         | 0 ms | 0 ms  |  5 ms  |  60 ms  | 3160 ms  |
-| List           | 0 ms | 0 ms  |  9 ms  |  92 ms  | 4153 ms  |
+| Vector         | 0 ms | 0 ms  |  4 ms  |  69 ms  | 2282 ms  |
+| List           | 0 ms | 1 ms  | 12 ms  | 189 ms  | 3596 ms  |
+
+### Results:
+* An optimised approach 1 showed better results than approach 2
